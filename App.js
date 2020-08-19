@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,6 +18,7 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -35,24 +36,99 @@ import BookmarkScreen from './screens/BookmarkScreen'
 import SupportScreen from './screens/SupportScreen'
 import SettingScreen from './screens/SettingScreen'
 import RootStackScreen from './screens/RootStackScreen'
+import { AuthContext } from './components/context'
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Drawer = createDrawerNavigator();
 
+const initialLoginState = {
+  isLoading: true,
+  userName: null,
+  userToken: null
+}
 
+const loginReducer = (prevState, action) => {
+  switch (action.type) {
+    case 'RETRIEVE_TOKEN':
+      return { ...prevState, userToken: action.token, isLoading: false }
+    case 'LOGIN':
+      return { ...prevState, userName: action.id, userToken: action.token, isLoading: false }
+    case 'LOGOUT':
+      return { ...initialLoginState, isLoading: false }
+    case 'REGISTER':
+      return { ...prevState, userName: action.id, userToken: action.token, isLoading: false }
+  }
+}
 
 const App: () => React$Node = () => {
+
+  const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState)
+
+  const authContext = React.useMemo(() => ({
+    signIn: async (userName, password) => {
+      let userToken
+      userToken = null
+      if (userName === "user" && password === "pass") {
+        try {
+          userToken = "Adjjffddk33"
+          await AsyncStorage.setItem('userToken', userToken)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      dispatch({ type: "LOGIN", id: userName, token: userToken })
+    },
+    signOut: async () => {
+      try {
+        await AsyncStorage.removeItem('userToken');
+      } catch (e) {
+        console.log(e);
+      }
+      dispatch({ type: 'LOGOUT' });
+    }
+  }), [])
+
+  useEffect(() => {
+
+    const getToken = async () => {
+      let userToken
+      userToken = null
+      try {
+        userToken = await AsyncStorage.getItem('userToken')
+      } catch (error) {
+        console.log('error')
+      }
+      dispatch({ type: "REGISTER", token: userToken })
+    }
+    getToken();
+  }, [])
+
+  if (loginState.isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" animating={true} color="#009387" />
+      </View>
+    )
+  }
+
   return (
-    <NavigationContainer>
-      {/* <Drawer.Navigator
-        initialRouteName="HomeDrawer"
-        drawerContent={props => <DrawerContent {...props} />}>
-        <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
-        <Drawer.Screen name="Bookmark" component={BookmarkScreen} />
-        <Drawer.Screen name="Settings" component={SettingScreen} />
-        <Drawer.Screen name="Support" component={SupportScreen} />
-      </Drawer.Navigator> */}
-      <RootStackScreen />
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+        {loginState.userToken !== null ? (
+          <Drawer.Navigator
+            initialRouteName="HomeDrawer"
+            drawerContent={props => <DrawerContent {...props} />}>
+            <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
+            <Drawer.Screen name="Bookmark" component={BookmarkScreen} />
+            <Drawer.Screen name="Settings" component={SettingScreen} />
+            <Drawer.Screen name="Support" component={SupportScreen} />
+          </Drawer.Navigator>
+        ) : (
+            <RootStackScreen />
+          )}
+
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 };
 
