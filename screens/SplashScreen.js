@@ -26,7 +26,8 @@ export default SplashScreen = ({ navigation }) => {
                 animation="fadeInUpBig"
             >
                 <Text style={[styles.title, {
-                    color: colors.text
+                    color: colors.text,
+                    fontFamily: 'BalsamiqSans-Bold'
                 }]}>Stay Connected With Everyone!</Text>
                 <Text style={styles.text}>Signin with account</Text>
                 <View style={styles.button}>
