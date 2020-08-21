@@ -26,8 +26,7 @@ export default SplashScreen = ({ navigation }) => {
                 animation="fadeInUpBig"
             >
                 <Text style={[styles.title, {
-                    color: colors.text,
-                    fontFamily: 'BalsamiqSans-Bold'
+                    color: colors.text
                 }]}>Stay Connected With Everyone!</Text>
                 <Text style={styles.text}>Signin with account</Text>
                 <View style={styles.button}>
@@ -73,11 +72,12 @@ const styles = StyleSheet.create({
     title: {
         color: '#05375a',
         fontSize: 30,
-        fontWeight: 'bold'
+        fontFamily: 'BalsamiqSans-Bold'
     },
     text: {
         color: 'grey',
-        marginTop: 5
+        marginTop: 5,
+        fontFamily: 'BalsamiqSans-Bold'
     },
     button: {
         alignItems: "flex-end",
