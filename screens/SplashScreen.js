@@ -4,8 +4,10 @@ import { shadow } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable'
 import LinearGradient from 'react-native-linear-gradient'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { useTheme } from '@react-navigation/native'
 
 export default SplashScreen = ({ navigation }) => {
+    const { colors } = useTheme()
     return (
         <View style={styles.container}>
             <StatusBar
@@ -20,10 +22,12 @@ export default SplashScreen = ({ navigation }) => {
                     source={require('../assets/logo.png')}
                 />
             </View>
-            <Animatable.View style={styles.footer}
+            <Animatable.View style={[styles.footer, { backgroundColor: colors.background }]}
                 animation="fadeInUpBig"
             >
-                <Text style={styles.title}>Stay Connected With Everyone!</Text>
+                <Text style={[styles.title, {
+                    color: colors.text
+                }]}>Stay Connected With Everyone!</Text>
                 <Text style={styles.text}>Signin with account</Text>
                 <View style={styles.button}>
                     <TouchableOpacity onPress={() => { navigation.navigate('SigninScreen') }}>

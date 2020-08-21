@@ -17,10 +17,11 @@ import * as Animatable from 'react-native-animatable'
 import LinearGradient from 'react-native-linear-gradient'
 import { AuthContext } from '../components/context'
 import Users from '../model/users'
+import { useTheme } from 'react-native-paper'
 
 export default SigninScreen = ({ navigation }) => {
 
-
+    const { colors } = useTheme()
     const { signIn } = React.useContext(AuthContext)
     const [data, setData] = useState({
         username: '',
@@ -118,17 +119,23 @@ export default SigninScreen = ({ navigation }) => {
             <View style={styles.header}>
                 <Text style={styles.textHeader}>Welcome!</Text>
             </View>
-            <Animatable.View style={styles.footer} animation="fadeInUpBig">
-                <Text style={styles.text_footer}>Username</Text>
+            <Animatable.View style={[styles.footer, {
+                backgroundColor: colors.background
+            }]} animation="fadeInUpBig">
+                <Text style={[styles.text_footer, {
+                    color: colors.text
+                }]}>Username</Text>
                 <View style={styles.action}>
                     <FontAwesome
                         name="user-o"
-                        color="#05375a"
+                        color={colors.text}
                         size={20}
                     />
                     <TextInput
                         placeholder="Username"
-                        style={styles.TextInput}
+                        style={[styles.TextInput, {
+                            color: colors.text
+                        }]}
                         autoCapitalize="none"
                         onChangeText={textInputChange}
                         value={data.username}
@@ -149,17 +156,21 @@ export default SigninScreen = ({ navigation }) => {
                         <Text style={styles.errorMessage}>Username must be 4 characters Long</Text>
                     </Animatable.View>
                 }
-                <Text style={styles.text_footer}>Password</Text>
+                <Text style={[styles.text_footer, {
+                    color: colors.text
+                }]}>Password</Text>
                 <View style={styles.action}>
-                    <FontAwesome
+                    <Feather
                         name="lock"
-                        color="#05375a"
+                        color={colors.text}
                         size={20}
                     />
                     <TextInput
                         placeholder="Password"
                         secureTextEntry={data.secureTextEntry}
-                        style={styles.TextInput}
+                        style={[styles.TextInput, {
+                            color: colors.text
+                        }]}
                         value={data.password}
                         onChangeText={handlePasswordChange}
                         onEndEditing={(e) => handleValidPassword(e.nativeEvent.text)}

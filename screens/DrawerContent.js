@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer'
 import { View, StyleSheet } from 'react-native'
-import { Drawer, Text, Avatar, Caption, Title, Paragraph, TouchableRipple, Switch } from 'react-native-paper'
+import { Drawer, Text, Avatar, Caption, Title, Paragraph, TouchableRipple, Switch, useTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { AuthContext } from '../components/context'
 export default (props) => {
-    const [isDarkTheme, setIsDarkTheme] = useState(false)
-    const { signOut } = React.useContext(AuthContext)
-    const toggleTheme = () => {
-        setIsDarkTheme(!isDarkTheme)
-    }
+    const { signOut, toggleTheme } = React.useContext(AuthContext)
+    const paperTheme = useTheme()
     return (
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView {...props}>
@@ -109,7 +106,7 @@ export default (props) => {
                         <View style={styles.preference}>
                             <Text>Dark Theme</Text>
                             <View pointerEvents="none">
-                                <Switch value={isDarkTheme} />
+                                <Switch value={paperTheme.dark} />
                             </View>
                         </View>
                     </TouchableRipple>
