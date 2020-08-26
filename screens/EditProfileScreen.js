@@ -1,15 +1,43 @@
-import React from 'react'
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { View, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Feather from 'react-native-vector-icons/Feather'
 import { useTheme } from 'react-native-paper'
 import Animated from 'react-native-reanimated'
 import BottomSheet from 'reanimated-bottom-sheet';
+import ImagePicker from 'react-native-image-crop-picker';
 const EditProfileScreen = () => {
     const { colors } = useTheme()
-    const bs = React.createRef()
+    const [image, setImage] = useState("https://api.adorable.io/avatars/285/abott@adorable.png")
+    const [enableShift, setEnableShift] = useState(false)
+    const bs = React.useRef(null)
     const fall = new Animated.Value(1)
+
+    const takePhotoFromCamera = () => {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 300,
+            cropping: true,
+        }).then(image => {
+            console.log(image);
+            setImage(image.path)
+            bs.current.snapTo(1)
+        }).catch(err => console.log(err))
+    }
+
+    const choosePhotoFromGallery = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true
+        }).then(image => {
+            console.log(image);
+            setImage(image.path)
+            bs.current.snapTo(1)
+        }).catch(err => console.log(err))
+    }
+
     const renderInner = () => (
         <View style={styles.panel}>
             <View style={{ alignItems: 'center' }}>
@@ -18,12 +46,12 @@ const EditProfileScreen = () => {
             </View>
             <TouchableOpacity
                 style={styles.panelButton}
-                onPress={() => { }}>
+                onPress={takePhotoFromCamera}>
                 <Text style={styles.panelButtonTitle}>Take Photo</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.panelButton}
-                onPress={() => { }}>
+                onPress={choosePhotoFromGallery}>
                 <Text style={styles.panelButtonTitle}>Choose From Library</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -44,7 +72,10 @@ const EditProfileScreen = () => {
     )
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}
+            behavior="position"
+            enabled={enableShift}
+        >
             <BottomSheet
                 ref={bs}
                 snapPoints={[330, 0]}
@@ -69,7 +100,7 @@ const EditProfileScreen = () => {
                         }}>
                             <ImageBackground
                                 source={{
-                                    uri: "https://api.adorable.io/avatars/285/abott@adorable.png"
+                                    uri: image
                                 }}
                                 style={{ height: 100, width: 100 }}
                                 imageStyle={{ borderRadius: 15 }}
@@ -98,6 +129,7 @@ const EditProfileScreen = () => {
                         style={[styles.textInput, {
                             color: colors.text
                         }]}
+                        onFocus={() => setEnableShift(false)}
                     />
                 </View>
                 <View style={styles.action}>
@@ -112,6 +144,7 @@ const EditProfileScreen = () => {
                                 color: colors.text,
                             },
                         ]}
+                        onFocus={() => setEnableShift(false)}
                     />
                 </View>
                 <View style={styles.action}>
@@ -127,6 +160,7 @@ const EditProfileScreen = () => {
                                 color: colors.text,
                             },
                         ]}
+                        onFocus={() => setEnableShift(false)}
                     />
                 </View>
                 <View style={styles.action}>
@@ -142,6 +176,7 @@ const EditProfileScreen = () => {
                                 color: colors.text,
                             },
                         ]}
+                        onFocus={() => setEnableShift(true)}
                     />
                 </View>
                 <View style={styles.action}>
@@ -156,6 +191,7 @@ const EditProfileScreen = () => {
                                 color: colors.text,
                             },
                         ]}
+                        onFocus={() => setEnableShift(true)}
                     />
                 </View>
                 <View style={styles.action}>
@@ -170,13 +206,14 @@ const EditProfileScreen = () => {
                                 color: colors.text,
                             },
                         ]}
+                        onFocus={() => setEnableShift(true)}
                     />
                 </View>
                 <TouchableOpacity style={styles.commandButton} onPress={() => { }}>
                     <Text style={styles.panelButtonTitle}>Submit</Text>
                 </TouchableOpacity>
             </Animated.View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
